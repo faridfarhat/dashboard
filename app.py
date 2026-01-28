@@ -6,6 +6,8 @@ from pages import distribution, aggregation, home
 app = dash.Dash(__name__, suppress_callback_exceptions=True)
 app.title = "Analytics Dashboard"
 
+server = app.server  # Expose the server variable for deployments
+
 # Define the app layout
 app.layout = html.Div([
     # Navigation Bar
