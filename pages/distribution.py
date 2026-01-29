@@ -122,18 +122,20 @@ def update_distribution_graphs(selected_metric):
         template='plotly_white'
     )
     
-    # KDE (using histogram with cumulative)
-    fig_kde = go.Figure(data=[
-        go.Histogram(x=data, nbinsx=50, name=selected_metric, 
-                    marker_color='#2ecc71', opacity=0.7, 
-                    histfunc='count', cumulative_enabled=False)
-    ])
-    fig_kde.update_layout(
-        title=f'Distribution Density of {selected_metric}',
+    # ECDF (Empirical Cumulative Distribution Function)
+    fig_ecdf = go.Figure()
+    if len(data) > 0:
+        sorted_data = np.sort(data)
+        cdf = np.arange(1, len(sorted_data) + 1) / len(sorted_data)
+        fig_ecdf.add_trace(go.Scatter(x=sorted_data, y=cdf, mode='lines+markers', name='ECDF', line=dict(color='#2ecc71', width=2)))
+    else:
+        fig_ecdf.add_annotation(text='No data for selected metric', xref='paper', yref='paper', showarrow=False)
+
+    fig_ecdf.update_layout(
+        title=f'ECDF of {selected_metric}',
         xaxis_title=selected_metric,
-        yaxis_title='Density',
-        template='plotly_white',
-        barmode='overlay'
+        yaxis_title='Cumulative Probability',
+        template='plotly_white'
     )
-    
-    return fig_hist, fig_box, fig_kde
+
+    return fig_hist, fig_box, fig_ecdf
